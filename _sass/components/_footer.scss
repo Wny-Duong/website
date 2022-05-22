@@ -42,4 +42,15 @@
       margin: 0;
     }
   }
+  .footer-map{
+    display: flex;
+    flex-wrap: wrap-reverse; 
+    justify-content: center;
+    margin: 15px 0 15px 0;
+
+    @media #{$bp-mobile-up} {
+      justify-content: space-between;
+      margin: 0;
+    }
+  }
 }

@@ -1,8 +1,8 @@
 - name: Join Us
-  link: join
+  link: /join
 
 - name: Donate
-  link: /toolkit
+  link: /donate
 
 - name: Advise Us
   link: /toolkit

@@ -24,8 +24,9 @@ document.addEventListener("DOMContentLoaded",function(){
             let filterTitle = "";
             if(filterName === "programs"){
                 filterTitle = "program areas"
-            } else if(filterName === 'technologies') {
-                filterTitle = 'languages / technologies'
+            } 
+            else if(filterName === 'technologies') {
+                filterTitle = 'technologies'
                 filterValue.sort((a,b)=> {
                     a = a.toLowerCase()
                     b = b.toLowerCase()
@@ -33,7 +34,18 @@ document.addEventListener("DOMContentLoaded",function(){
                     if(a > b) return 1;
                     return 0;
                 })
-            } else {
+            } 
+            else if(filterName === 'languages') {
+                filterTitle = 'languages'
+                filterValue.sort((a,b)=> {
+                    a = a.toLowerCase()
+                    b = b.toLowerCase()
+                    if(a < b) return -1;
+                    if(a > b) return 1;
+                    return 0;
+                })
+            }
+            else {
                 filterTitle = filterName
             }
             document.querySelector('.filter-list').insertAdjacentHTML( 'beforeend', dropDownFilterComponent( filterName,filterValue,filterTitle) );
@@ -161,9 +173,10 @@ function createFilter(sortedProjectData){
     return {
             // 'looking': [ ... new Set( (sortedProjectData.map(item => item.project.looking ? item.project.looking.map(item => item.category) : '')).flat() ) ].filter(v=>v!='').sort(),
             // ^ See issue #1997 for more info on why this is commented out
-            'programs': [...new Set(sortedProjectData.map(item => item.project.programAreas ? item.project.programAreas.map(programArea => programArea) : '').flat() ) ].filter(v=>v!='').sort(),
-            'technologies': [...new Set(sortedProjectData.map(item => (item.project.technologies && item.project.languages?.length > 0) ? [item.project.languages, item.project.technologies].flat() : '').flat() ) ].filter(v=>v!='').sort(),
-            'status': [... new Set(sortedProjectData.map(item => item.project.status))].sort(),
+            //'programs': [...new Set(sortedProjectData.map(item => item.project.programAreas ? item.project.programAreas.map(programArea => programArea) : '').flat() ) ].filter(v=>v!='').sort(),
+            'technologies': [...new Set(sortedProjectData.map(item => (item.project.technologies && item.project.languages?.length > 0) ? [item.project.technologies].flat() : '').flat() ) ].filter(v=>v!='').sort(),
+            'languages': [...new Set(sortedProjectData.map(item => (item.project.technologies && item.project.languages?.length > 0) ? [item.project.languages].flat() : '').flat() ) ].filter(v=>v!='').sort(),
+            //'status': [... new Set(sortedProjectData.map(item => item.project.status))].sort(),
 
         }
 }

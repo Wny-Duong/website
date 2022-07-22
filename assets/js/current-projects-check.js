@@ -80,7 +80,8 @@ function retrieveProjectDataFromCollection(){
             {
                 "project": {
                             'id': "{{project.id | default: 0}}",
-                            'identification': {{project.identification | default: 0}}
+                            'identification': {{project.identification | default: 0}},
+                            "status": "{{ project.status }}"
                             {%- if project.image -%},
                             "image": '{{ project.image }}'
                             {%- endif -%}
@@ -133,7 +134,24 @@ function retrieveProjectDataFromCollection(){
  *  1. It sort all projects in the array alphabetically on their `status` value
  *  2. It sort all project by title for each status type
 */
+function projectDataSorter(projectdata){
 
+    const statusList = ["Active","Completed","On Hold"]
+    const sortedProjectContainer = [];
+
+    // Sort Project data by status alphabetically
+    projectdata.sort( (a,b) => (a.project.status > b.project.status) ? 1 : -1)
+
+    // Sort Project Data by title for each status type
+    for(const status of statusList){
+            let arr = projectdata.filter(function(item){
+            return item.project.status === status
+        }).sort( (a,b) => (a.project.title > b.project.title) ? 1 : -1);
+        sortedProjectContainer.push(...arr);
+    }
+
+    return sortedProjectContainer;
+}
 
 /**
  * Given an array of project object as returned by ``retrieveProjectDataFromCollection()``
@@ -144,7 +162,8 @@ function createFilter(sortedProjectData){
             // 'looking': [ ... new Set( (sortedProjectData.map(item => item.project.looking ? item.project.looking.map(item => item.category) : '')).flat() ) ].filter(v=>v!='').sort(),
             // ^ See issue #1997 for more info on why this is commented out
             'programs': [...new Set(sortedProjectData.map(item => item.project.programAreas ? item.project.programAreas.map(programArea => programArea) : '').flat() ) ].filter(v=>v!='').sort(),
-            'technologies': [...new Set(sortedProjectData.map(item => (item.project.technologies && item.project.languages?.length > 0) ? [item.project.languages, item.project.technologies].flat() : '').flat() ) ].filter(v=>v!='').sort()
+            'technologies': [...new Set(sortedProjectData.map(item => (item.project.technologies && item.project.languages?.length > 0) ? [item.project.languages, item.project.technologies].flat() : '').flat() ) ].filter(v=>v!='').sort(),
+            'status': [... new Set(sortedProjectData.map(item => item.project.status))].sort(),
 
         }
 }
@@ -406,6 +425,7 @@ function clearAllEventHandler(){
 function projectCardComponent(project){
 return `
         <li class="project-card" id="${ project.identification }"
+            data-status="${project.status}"
             data-looking="${project.looking ? [... new Set(project.looking.map(looking => looking.category)) ] : ''}"
             data-technologies="${(project.technologies && project.languages) ? [... new Set(project.technologies.map(tech => tech)), project.languages.map(lang => lang)] : '' }"
 
@@ -421,6 +441,8 @@ return `
         </a>
 
         <div class="project-body">
+            <div class='status-indicator status-${project.status}'>
+            <h5 class='status-text'>${ project.status }</h5>
             </div>
 
             <a href='${ project.id }'><h4 class="project-title">${ project.title }</h4></a>

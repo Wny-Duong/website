@@ -7,9 +7,10 @@ document.addEventListener("DOMContentLoaded",function(){
     (function main(){
 
         const projectData = retrieveProjectDataFromCollection();
-
+        console.log("ProjecData Here");
+        
         const sortedProjectData = projectDataSorter(projectData);
-
+        console.log(sortedProjectData);
         // Insert Project Card Into The Dom
         for(const item of sortedProjectData){
             document.querySelector('.project-list').insertAdjacentHTML('beforeend', projectCardComponent(item.project))
@@ -17,9 +18,11 @@ document.addEventListener("DOMContentLoaded",function(){
 
         // create filter dictionary from sorted project data
         let filters = createFilter(sortedProjectData);
-        
+        console.log(filters);
         // Insert Checkbox Filter Into The Dom
+        console.log('start filterValues');
         for(let [filterName,filterValue] of Object.entries(filters)){
+            console.log([filterName,filterValue]);
             // Add displayed filter title, resolves issue of "program areas" not being valid html attribute name due to spacing
             let filterTitle = "";
             if(filterName === "programs"){
@@ -27,6 +30,7 @@ document.addEventListener("DOMContentLoaded",function(){
             } 
             else if(filterName === 'technologies') {
                 filterTitle = 'technologies'
+                //What does this do?
                 filterValue.sort((a,b)=> {
                     a = a.toLowerCase()
                     b = b.toLowerCase()
@@ -35,8 +39,8 @@ document.addEventListener("DOMContentLoaded",function(){
                     return 0;
                 })
             } 
-            else if(filterName === 'languages') {
-                filterTitle = 'languages'
+            else if(filterName === 'languages3') {
+                filterTitle = 'languages3'
                 filterValue.sort((a,b)=> {
                     a = a.toLowerCase()
                     b = b.toLowerCase()
@@ -174,8 +178,13 @@ function createFilter(sortedProjectData){
             // 'looking': [ ... new Set( (sortedProjectData.map(item => item.project.looking ? item.project.looking.map(item => item.category) : '')).flat() ) ].filter(v=>v!='').sort(),
             // ^ See issue #1997 for more info on why this is commented out
             //'programs': [...new Set(sortedProjectData.map(item => item.project.programAreas ? item.project.programAreas.map(programArea => programArea) : '').flat() ) ].filter(v=>v!='').sort(),
-            'technologies': [...new Set(sortedProjectData.map(item => (item.project.technologies && item.project.languages?.length > 0) ? [item.project.technologies].flat() : '').flat() ) ].filter(v=>v!='').sort(),
-            'languages': [...new Set(sortedProjectData.map(item => (item.project.technologies && item.project.languages?.length > 0) ? [item.project.languages].flat() : '').flat() ) ].filter(v=>v!='').sort(),
+            'languages': [...new Set(sortedProjectData.map(item => (item.project.languages?.length > 0) ? [item.project.languages].flat() : '').flat() ) ].filter(v=>v!='').sort(),
+            'technologies': [...new Set(sortedProjectData.map(item => (item.project.technologies?.length > 0) ? [item.project.technologies].flat() : '').flat() ) ].filter(v=>v!='').sort(),
+            //'technologies': [...new Set(sortedProjectData.map(item => (item.project.technologies && item.project.languages?.length > 0) ? [item.project.languages].flat() : '').flat() ) ].filter(v=>v!='').sort(),
+            //working final: languages only
+            //'languages': [...new Set(sortedProjectData.map(item => (item.project.technologies && item.project.languages?.length > 0) ? [item.project.languages].flat() : '').flat() ) ].filter(v=>v!='').sort(),
+            //working: languages clone of technologies with all
+            //'languages': [...new Set(sortedProjectData.map(item => (item.project.technologies && item.project.languages?.length > 0) ? [item.project.languages].flat() : '').flat() ) ].filter(v=>v!='').sort(),
             //'status': [... new Set(sortedProjectData.map(item => item.project.status))].sort(),
 
         }
@@ -209,12 +218,11 @@ function checkBoxEventHandler(){
  * The updateUI function updates the ui based on the url parameters during the following events
  *  1. URL parameter changes
  *  2. Page is reloaded/refreshed
+ * not helpful for me
 */
 function updateUI(){
-
     //Get filter parameters from the url
     const filterParams = Object.fromEntries(new URLSearchParams(window.location.search));
-
     //Transform filterparam object values to arrays
     Object.entries(filterParams).forEach( ([key,value]) => filterParams[key] = value.split(',') )
 
@@ -311,6 +319,8 @@ function updateProjectCardDisplayState(filterParams){
     document.querySelectorAll('.project-card').forEach(projectCard => {
         const projectCardObj = {};
         for(const key in filterParams){
+            //Issue is triggering here for some reason?
+            console.log(key);
             projectCardObj[key] = projectCard.dataset[key].split(",");
         }
         const cardsToHideContainer = [];
@@ -434,6 +444,7 @@ function clearAllEventHandler(){
 
 /**
  * Takes a single project object and returns the html string representing the project card
+ * testing, what if data-languages
 */
 function projectCardComponent(project){
 return `
@@ -441,7 +452,7 @@ return `
             data-status="${project.status}"
             data-looking="${project.looking ? [... new Set(project.looking.map(looking => looking.category)) ] : ''}"
             data-technologies="${(project.technologies && project.languages) ? [... new Set(project.technologies.map(tech => tech)), project.languages.map(lang => lang)] : '' }"
-
+            data-languages="${project.languages ? [... new Set(project.languages.map(lang => lang))] : '' }"
             data-location="${project.location? project.location.map(city => city) : '' }"
             data-programs="${project.programAreas ? project.programAreas.map(programArea => programArea) : '' }"
         >

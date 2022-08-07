@@ -7,10 +7,9 @@ document.addEventListener("DOMContentLoaded",function(){
     (function main(){
 
         const projectData = retrieveProjectDataFromCollection();
-        console.log("ProjecData Here");
         
         const sortedProjectData = projectDataSorter(projectData);
-        console.log(sortedProjectData);
+
         // Insert Project Card Into The Dom
         for(const item of sortedProjectData){
             document.querySelector('.project-list').insertAdjacentHTML('beforeend', projectCardComponent(item.project))
@@ -18,11 +17,9 @@ document.addEventListener("DOMContentLoaded",function(){
 
         // create filter dictionary from sorted project data
         let filters = createFilter(sortedProjectData);
-        console.log(filters);
+
         // Insert Checkbox Filter Into The Dom
-        console.log('start filterValues');
         for(let [filterName,filterValue] of Object.entries(filters)){
-            console.log([filterName,filterValue]);
             // Add displayed filter title, resolves issue of "program areas" not being valid html attribute name due to spacing
             let filterTitle = "";
             if(filterName === "programs"){
@@ -319,8 +316,6 @@ function updateProjectCardDisplayState(filterParams){
     document.querySelectorAll('.project-card').forEach(projectCard => {
         const projectCardObj = {};
         for(const key in filterParams){
-            //Issue is triggering here for some reason?
-            console.log(key);
             projectCardObj[key] = projectCard.dataset[key].split(",");
         }
         const cardsToHideContainer = [];

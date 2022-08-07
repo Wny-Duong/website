@@ -27,7 +27,6 @@ document.addEventListener("DOMContentLoaded",function(){
             } 
             else if(filterName === 'technologies') {
                 filterTitle = 'technologies'
-                //What does this do?
                 filterValue.sort((a,b)=> {
                     a = a.toLowerCase()
                     b = b.toLowerCase()
@@ -36,16 +35,6 @@ document.addEventListener("DOMContentLoaded",function(){
                     return 0;
                 })
             } 
-            else if(filterName === 'languages3') {
-                filterTitle = 'languages3'
-                filterValue.sort((a,b)=> {
-                    a = a.toLowerCase()
-                    b = b.toLowerCase()
-                    if(a < b) return -1;
-                    if(a > b) return 1;
-                    return 0;
-                })
-            }
             else {
                 filterTitle = filterName
             }
@@ -439,7 +428,6 @@ function clearAllEventHandler(){
 
 /**
  * Takes a single project object and returns the html string representing the project card
- * testing, what if data-languages
 */
 function projectCardComponent(project){
 return `
